@@ -1,4 +1,5 @@
 #Fix the Process to be blocked until both files are uploaded.
+#Change inputs in GUI on the Right Frame
 
 
 from tkinter import *
@@ -115,7 +116,7 @@ class simulation:
         self.makeDataUsable()
     
 
-            
+# This function should be apart of the GUI, Complete during the last iteration
     def inputUserParameters(self):
 
         self.standardDeviation = input("Please enter the Standard Deviation you want to use:")
