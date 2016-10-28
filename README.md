@@ -1,7 +1,7 @@
 # one SKU
-# DC, SKU, WEEK # (EX: 1,2,3,..), Day of the Week, Date, Actual Demand, Beginning Inventory, Supply
-# Create a second input CSV
-# One Future and One Past
+# DC, SKU, WEEK # (EX: 1,2,3,..), Day of the Week, Date, Actual Demand, Beginning Inventory, Supply - Created
+# Create a second input CSV - DONE
+# One Future and One Past - DONE
 
 # enter 31, Need the forecast for week 31, Need to know the beginning Inventory for week 31 so need to know what beginning inventory in week 30
 # BI31=BI30+S30-DF30

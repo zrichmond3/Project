@@ -1,11 +1,15 @@
 #Fix the Process to be blocked until both files are uploaded.
 #Change inputs in GUI on the Right Frame
-
+#Create functions for Distributions
 
 from tkinter import *
+from tkinter import filedialog
 import csv
 import urllib.request
-from re import findall
+from getDistribution import *
+from inputUserParameters import *
+from makeDataUsable import *
+from balanceOOS import *
 
 class simulation:
     def __init__(self,w):
@@ -37,28 +41,31 @@ class simulation:
         b64_data = base64.encodebytes(myPicture)
         self.x = PhotoImage(data=b64_data)
 
-        self.photo_LP_label=Label(self.myTOPFrame, image=self.x)
+        self.photo_LP_label = Label(self.myTOPFrame, image=self.x)
         self.photo_LP_label.grid(row=0, column=0)
 
-        self.loadFirstInputCSVFile = Button(self.left1, width=71, text="Load First CSV File", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E+W)
-        self.file_Path=Label(self.left1, text="File Path").grid(row=1, column=0)
-##        self.loadSecondInputCSVFile = Button(self.left1, width=71, text="Load Second CSV File", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
-##        self.file_Path=Label(self.left1, text="File Path").grid(row=2, column=0)
-            
-        self.inputFirstCSVFile= Label(self.left2, text ="Input First CSV File").grid(row=0, column=0)
-        self.inputFirstCSVFileEntry=Entry(self.left2, width =60, state="readonly")
+        self.loadFirstInputCSVFile = Button(self.left1, width=71, text="Load First CSV File",
+                                            command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E + W)
+        self.file_Path = Label(self.left1, text="File Path").grid(row=1, column=0)
+        ##        self.loadSecondInputCSVFile = Button(self.left1, width=71, text="Load Second CSV File", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
+        ##        self.file_Path=Label(self.left1, text="File Path").grid(row=2, column=0)
+
+        self.inputFirstCSVFile = Label(self.left2, text="Input First CSV File").grid(row=0, column=0)
+        self.inputFirstCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.inputFirstCSVFileEntry.grid(row=0, column=1)
 
-##        self.inputSecondCSVFile= Label(self.left2, text ="Input Second CSV File").grid(row=1, column=0)
-##        self.inputSecondCSVFileEntry=Entry(self.left2, width =60, state="readonly")
-##        self.inputSecondCSVFileEntry.grid(row=1, column=1)
+        ##        self.inputSecondCSVFile= Label(self.left2, text ="Input Second CSV File").grid(row=1, column=0)
+        ##        self.inputSecondCSVFileEntry=Entry(self.left2, width =60, state="readonly")
+        ##        self.inputSecondCSVFileEntry.grid(row=1, column=1)
 
         self.outputCSVFile = Label(self.left2, text="Output CSV File").grid(row=2, column=0)
-        self.outputCSVFileEntry = Entry(self.left2, width= 60, state="readonly")
+        self.outputCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.outputCSVFileEntry.grid(row=2, column=1)
 
-        self.process_Data = Button(self.left3, text="Process Data", width=71, state="disabled", command=self.processDataButtonClicked)
-        self.process_Data.grid(row=0,column=0)
+        self.process_Data = Button(self.left3, text="Process Data", width=71, state="disabled",
+                                   command=self.processDataButtonClicked)
+        self.process_Data.grid(row=0, column=0)
+
         
 
     def loadFirstCSVclicked(self):
@@ -112,30 +119,11 @@ class simulation:
 
                 
     def processDataButtonClicked(self):
-        self.inputUserParameters()
-        self.makeDataUsable()
+        inputUserParameters(self)
+        makeDataUsable(self)
+        getDistribution(self)
+        balanceOOS(self)
     
-
-# This function should be apart of the GUI, Complete during the last iteration
-    def inputUserParameters(self):
-
-        self.standardDeviation = input("Please enter the Standard Deviation you want to use:")
-        self.standardDeviation = float(self.standardDeviation)
-        self.mean = input("Please enter the mean you want to use:")
-        self.mean = float(self.mean)
-        self.kValue = input("Please enter the K value you want to use:")
-        self.kValue=float(self.kValue)
-        self.distribution = input("Please enter the Distribution you would like to use:")
-        self.distribution= str(self.distribution)
-
-    def makeDataUsable(self):
-        return
-
-                            
-            
-
-
-
 
             
 w = Tk()
