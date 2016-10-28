@@ -123,6 +123,10 @@ class simulation:
         self.standardDeviation = float(self.standardDeviation)
         self.mean = input("Please enter the mean you want to use:")
         self.mean = float(self.mean)
+        self.kValue = input("Please enter the K value you want to use:")
+        self.kValue=float(self.kValue)
+        self.distribution = input("Please enter the Distribution you would like to use:")
+        self.distribution= str(self.distribution)
 
     def makeDataUsable(self):
         return
