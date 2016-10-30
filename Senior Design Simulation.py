@@ -8,8 +8,9 @@ import csv
 import urllib.request
 from getDistribution import *
 from inputUserParameters import *
-from makeDataUsable import *
+from weeklyDemand import *
 from balanceOOS import *
+from masterData import *
 
 class simulation:
     def __init__(self,w):
@@ -44,26 +45,24 @@ class simulation:
         self.photo_LP_label = Label(self.myTOPFrame, image=self.x)
         self.photo_LP_label.grid(row=0, column=0)
 
-        self.loadFirstInputCSVFile = Button(self.left1, width=71, text="Load First CSV File",
-                                            command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E + W)
+        self.loadFirstInputCSVFile = Button(self.left1, width=71, text="Load First CSV File", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E + W)
         self.file_Path = Label(self.left1, text="File Path").grid(row=1, column=0)
-        ##        self.loadSecondInputCSVFile = Button(self.left1, width=71, text="Load Second CSV File", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
-        ##        self.file_Path=Label(self.left1, text="File Path").grid(row=2, column=0)
+        self.loadSecondInputCSVFile = Button(self.left1, width=71, text="Load Second CSV File", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
+        self.file_Path2=Label(self.left1, text="File Path").grid(row=2, column=0)
 
         self.inputFirstCSVFile = Label(self.left2, text="Input First CSV File").grid(row=0, column=0)
         self.inputFirstCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.inputFirstCSVFileEntry.grid(row=0, column=1)
 
-        ##        self.inputSecondCSVFile= Label(self.left2, text ="Input Second CSV File").grid(row=1, column=0)
-        ##        self.inputSecondCSVFileEntry=Entry(self.left2, width =60, state="readonly")
-        ##        self.inputSecondCSVFileEntry.grid(row=1, column=1)
+        self.inputSecondCSVFile= Label(self.left2, text ="Input Second CSV File").grid(row=1, column=0)
+        self.inputSecondCSVFileEntry=Entry(self.left2, width =60, state="readonly")
+        self.inputSecondCSVFileEntry.grid(row=1, column=1)
 
         self.outputCSVFile = Label(self.left2, text="Output CSV File").grid(row=2, column=0)
         self.outputCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.outputCSVFileEntry.grid(row=2, column=1)
 
-        self.process_Data = Button(self.left3, text="Process Data", width=71, state="disabled",
-                                   command=self.processDataButtonClicked)
+        self.process_Data = Button(self.left3, text="Process Data", width=71, state="disabled", command=self.processDataButtonClicked)
         self.process_Data.grid(row=0, column=0)
 
         
@@ -88,39 +87,48 @@ class simulation:
                 self.dataFirstSet.append(row)
             file.close()
             self.process_Data.config(state="active")
+
         except:
             messagebox.showwarning("Oh NO!", "Invalid CSV File")
             return None
 
-##    def loadSecondCSVclicked(self):
-##
-##        self.inputSecondCSVFILE=filedialog.askopenfilename()
-##        self.inputSecondCSVFileEntry.config(state=NORMAL)
-##        self.inputSecondCSVFileEntry.delete(0,END)
-##        self.inputSecondCSVFileEntry.insert(0,self.inputSecondCSVFILE)
-##        self.inputSecondCSVFileEntry.config(state="readonly")
-##
-##        self.loadFirstCSVFile()
-##
-##    def loadSecondCSVFile(self):
-##        
-##        self.dataSecondSet=[]
-##        try:
-##            file = open(self.inputSecondCCSVFILE, "r")
-##            csvReader=csv.reader(file, delimiter = ",")
-##            for row in csvReader:
-##                self.dataSecondSet.append(row)
-##            file.close()
-##            self.process_Data.config(state="active")
-##        except:
-##            messagebox.showwarning("Oh NO!", "Invalid CSV File")
-##            return None
+    def loadSecondCSVclicked(self):
+
+        self.inputSecondCSVFILE=filedialog.askopenfilename()
+        self.inputSecondCSVFileEntry.config(state=NORMAL)
+        self.inputSecondCSVFileEntry.delete(0,END)
+        self.inputSecondCSVFileEntry.insert(0,self.inputSecondCSVFILE)
+        self.inputSecondCSVFileEntry.config(state="readonly")
+
+        self.loadSecondCSVFile()
+
+    def loadSecondCSVFile(self):
+
+        self.dataSecondSet=[]
+        try:
+            file = open(self.inputSecondCSVFILE, "r")
+            csvReader=csv.reader(file, delimiter = ",")
+            for row in csvReader:
+                self.dataSecondSet.append(row)
+            file.close()
+            self.process_Data.config(state="active")
+        except:
+            messagebox.showwarning("Oh NO!", "Invalid CSV File")
+            return None
 
 
                 
     def processDataButtonClicked(self):
+        if len(self.dataFirstSet[0])==5:
+            weeklyDemand(self, self.dataFirstSet)
+        else:
+            weeklyDemand(self, self.dataSecondSet)
+        if len(self.dataFirstSet[0])==9:
+            masterData(self, self.dataFirstSet)
+        else:
+            masterData(self, self.dataSecondSet)
+
         inputUserParameters(self)
-        makeDataUsable(self)
         getDistribution(self)
         balanceOOS(self)
     
