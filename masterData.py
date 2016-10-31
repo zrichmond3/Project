@@ -1,5 +1,6 @@
 def masterData(self, data):
     self.masterDataDict = {}
+
     for row in data:
 #Day of Week, Week Number, Date Format, Plant Name, Material, Material Description, Retailer Demand, OOS quantity, BeginningInventoryVolume, Supply
         createKey = row[1] +"-"+row[3]
