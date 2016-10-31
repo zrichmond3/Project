@@ -15,6 +15,8 @@ class simulation:
         self.myLeftFrame.pack(side=LEFT)
         self.myRightFrame = Frame(w)
         self.myRightFrame.pack(side=RIGHT)
+        self.myBottomFrame = Frame(w)
+        self.myBottomFrame.pack(side=BOTTOM)
 
         self.left0 = Frame(self.myLeftFrame)
         self.left0.pack()
@@ -34,14 +36,31 @@ class simulation:
         myPicture = response.read()
         import base64
         b64_data = base64.encodebytes(myPicture)
-        self.x = PhotoImage(data=b64_data)
+        self.mainImage = PhotoImage(data=b64_data)
 
-        self.photo_LP_label = Label(self.myTOPFrame, image=self.x)
-        self.photo_LP_label.grid(row=0, column=0)
+        self.photoLabel = Label(self.myTOPFrame, image=self.mainImage)
+        self.photoLabel.grid(row=0, column=0)
 
-        self.loadFirstInputCSVFile = Button(self.left1, width=71, text="Load First CSV File", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E + W)
+        self.weekTitle = Label(self.right1, text="Enter Some Cool SHIT for the w-w-weee-kk").grid(row=0, columnspan=1, sticky= E+W)
+
+        self.entryAllocationAmount = StringVar()
+        self.allocationAmount = Label(self.right2, text="Allocation Amount:").grid(row=0, column=0)
+        self.allocationAmount = Entry(self.right2, width=30, state=NORMAL, text=self.entryAllocationAmount).grid(row=0, column=1)
+
+        self.entryKValue = StringVar()
+        self.kValue = Label(self.right2, text="k-value:").grid(row=1, column=0)
+        self.kValue = Entry(self.right2, width=30, state=NORMAL, text=self.entryKValue).grid(row=1, column=1)
+
+        self.entryWeekNumber = IntVar()
+        self.weekNumber = Label(self.right2, text="Allocating Week Number").grid(row=2, column=0)
+        self.weekNumber = Entry(self.right2, width=30, state=NORMAL, text=self.entryWeekNumber).grid(row=2, column=1)
+
+        self.moesBBQ = Label(self.right2, text="Do I need this?").grid(row=3, column=0)
+        self.moesBBQ = Entry(self.right2, width=30, state="readonly").grid(row=3, column=1)
+
+        self.loadFirstInputCSVFile = Button(self.left1, width=75, text="Load Weekly Demand", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E + W)
         self.file_Path = Label(self.left1, text="File Path").grid(row=1, column=0)
-        self.loadSecondInputCSVFile = Button(self.left1, width=71, text="Load Second CSV File", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
+        self.loadSecondInputCSVFile = Button(self.left1, width=75, text="Load Master Data", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
         self.file_Path2=Label(self.left1, text="File Path").grid(row=2, column=0)
 
         self.inputFirstCSVFile = Label(self.left2, text="Input First CSV File").grid(row=0, column=0)
@@ -56,8 +75,8 @@ class simulation:
         self.outputCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.outputCSVFileEntry.grid(row=2, column=1)
 
-        self.process_Data = Button(self.left3, text="Process Data", width=71, state="disabled", command=self.processDataButtonClicked)
-        self.process_Data.grid(row=0, column=0)
+        self.process_Data = Button(self.left3, text="Process Data", width=75, state="disabled", command=self.processDataButtonClicked)
+        self.process_Data.grid(row=0, column=0, sticky=E+W)
 
         
 
@@ -113,16 +132,23 @@ class simulation:
 
                 
     def processDataButtonClicked(self):
+        allocationAmount = self.entryAllocationAmount.get()
+        weekNumber = self.entryWeekNumber.get()
+        kValue = self.entryKValue.get()
+        print(allocationAmount, weekNumber, kValue)
+
+
+
         if len(self.dataFirstSet[0])==5:
-            weeklyOutlook = weeklyDemand(self, self.dataFirstSet)
+            weeklyOutlook = weeklyDemand(self, self.dataFirstSet, weekNumber, kValue)
         else:
-            weeklyOutlook = weeklyDemand(self, self.dataSecondSet)
+            weeklyOutlook = weeklyDemand(self, self.dataSecondSet, weekNumber, kValue)
         if len(self.dataFirstSet[0])==9:
             self.dataSecondSet= 0
-            updatedWeeklyOutlook = masterData(self, self.dataFirstSet, weeklyOutlook)
+            updatedWeeklyOutlook = masterData(self, self.dataFirstSet, weeklyOutlook, weekNumber)
         else:
             self.dataFirstSet = 0
-            updatedWeeklyOutlook= masterData(self, self.dataSecondSet, weeklyOutlook)
+            updatedWeeklyOutlook= masterData(self, self.dataSecondSet, weeklyOutlook, weekNumber)
 
         finalWeeklyOutlook = determineOrderQuantity(self, updatedWeeklyOutlook)
 

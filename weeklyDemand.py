@@ -1,7 +1,7 @@
 
 from statistics import *
 from scipy.stats import norm
-def weeklyDemand(self, data):
+def weeklyDemand(self, data, weekNumber, kValue):
     del data[0]
     skuList =[]
     plantList =[]
@@ -23,9 +23,9 @@ def weeklyDemand(self, data):
         for plant in plantList:
             afRatioList = []
             for row in data:
-                if plant == row[1] and sku == row[2] and row[0]<=29:
+                if plant == row[1] and sku == row[2] and row[0]<=(weekNumber-2):
                     afRatioList.append(row[5])
-                if plant == row[1] and sku == row[2] and row[0] == 31:
+                if plant == row[1] and sku == row[2] and row[0] == weekNumber:
                     forecastedDemand = row[4]
             avgAFRatio = mean(afRatioList)
             sigmaAFRatio = pstdev(afRatioList)
