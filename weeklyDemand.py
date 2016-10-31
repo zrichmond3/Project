@@ -38,7 +38,7 @@ def weeklyDemand(self, data):
             if weeklyOutlook not in weeklyOutlookList:
                 weeklyOutlookList.append(weeklyOutlook)
 
-
+#push
 
 
 
