@@ -1,15 +1,9 @@
-#Fix the Process to be blocked until both files are uploaded.
-#Change inputs in GUI on the Right Frame
-#Create functions for Distributions
-
 from tkinter import *
 from tkinter import filedialog
 import csv
 import urllib.request
-from getDistribution import *
-from inputUserParameters import *
 from weeklyDemand import *
-from balanceOOS import *
+from determineOrderQuantity import *
 from masterData import *
 
 class simulation:
@@ -120,17 +114,38 @@ class simulation:
                 
     def processDataButtonClicked(self):
         if len(self.dataFirstSet[0])==5:
-            weeklyDemand(self, self.dataFirstSet)
+            weeklyOutlook = weeklyDemand(self, self.dataFirstSet)
         else:
-            weeklyDemand(self, self.dataSecondSet)
+            weeklyOutlook = weeklyDemand(self, self.dataSecondSet)
         if len(self.dataFirstSet[0])==9:
-            masterData(self, self.dataFirstSet)
+            self.dataSecondSet= 0
+            updatedWeeklyOutlook = masterData(self, self.dataFirstSet, weeklyOutlook)
         else:
-            masterData(self, self.dataSecondSet)
+            self.dataFirstSet = 0
+            updatedWeeklyOutlook= masterData(self, self.dataSecondSet, weeklyOutlook)
 
-        inputUserParameters(self)
-        getDistribution(self)
-        balanceOOS(self)
+        finalWeeklyOutlook = determineOrderQuantity(self, updatedWeeklyOutlook)
+
+        self.outputToCSV(finalWeeklyOutlook)
+
+    def outputToCSV(self, finalWeeklyOutlook):
+        # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
+        f = filedialog.asksaveasfilename()
+
+        self.outputCSVFileEntry.config(state=NORMAL)
+        self.outputCSVFileEntry.delete(0, END)
+        self.outputCSVFileEntry.insert(0, f)
+        self.outputCSVFileEntry.config(state="readonly")
+
+        file = open(f, "w", newline="")
+        csvWriter = csv.writer(file)
+        csvWriter.writerow(
+            ["sku", "plant", "avgAFRatio", "sigmaAFRatio", "forecastedDemand", "muForecast", "sigmaForecast",
+             "forecastVariability", "beginningInventoryVolume", "retailerDemand", "supply", "orderQTY",
+             "onhand+onOrder-Demand"])
+        for row in finalWeeklyOutlook:
+            csvWriter.writerow(row)
+        file.close()
     
 
             

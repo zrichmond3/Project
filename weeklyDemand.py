@@ -22,8 +22,6 @@ def weeklyDemand(self, data):
     for sku in skuList:
         for plant in plantList:
             afRatioList = []
-            sigmaList = []
-            demandList = []
             for row in data:
                 if plant == row[1] and sku == row[2] and row[0]<=29:
                     afRatioList.append(row[5])
@@ -37,21 +35,4 @@ def weeklyDemand(self, data):
             weeklyOutlook = [sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability]
             if weeklyOutlook not in weeklyOutlookList:
                 weeklyOutlookList.append(weeklyOutlook)
-
-#push
-
-
-
-
-
-
-
-
-
-
-
-
-         #Week Number, Plant Name, Material, Weekly Demand, Forecast, A/F
-        #createKey = row[0] +"-"+row[1]
-        #self.weeklyDemandDict[createKey] = [row[2], row[3], row[4]]
-
+    return weeklyOutlookList
