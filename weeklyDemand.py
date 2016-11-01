@@ -2,11 +2,12 @@
 from statistics import *
 from scipy.stats import norm
 def weeklyDemand(self, data, weekNumber, kValue):
-    del data[0]
+
     skuList =[]
     plantList =[]
     weeklyOutlookList = []
     for row in data:
+
         row[3]=float(row[3])
         row[4]=float(row[4])
         row[0]=int(row[0])
@@ -31,7 +32,7 @@ def weeklyDemand(self, data, weekNumber, kValue):
             sigmaAFRatio = pstdev(afRatioList)
             muForecast = forecastedDemand*avgAFRatio
             sigmaForecast = forecastedDemand*sigmaAFRatio
-            forecastVariability = norm.ppf(.98, loc=muForecast, scale=sigmaForecast)
+            forecastVariability = norm.ppf(kValue, loc=muForecast, scale=sigmaForecast)
             weeklyOutlook = [sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability]
             if weeklyOutlook not in weeklyOutlookList:
                 weeklyOutlookList.append(weeklyOutlook)

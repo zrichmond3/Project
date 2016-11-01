@@ -38,6 +38,10 @@ class simulation:
         b64_data = base64.encodebytes(myPicture)
         self.mainImage = PhotoImage(data=b64_data)
 
+        self.totalOrders = 0
+        self.kValue = .9999999
+        self.counter = 0
+
         self.photoLabel = Label(self.myTOPFrame, image=self.mainImage)
         self.photoLabel.grid(row=0, column=0)
 
@@ -47,16 +51,9 @@ class simulation:
         self.allocationAmount = Label(self.right2, text="Allocation Amount:").grid(row=0, column=0)
         self.allocationAmount = Entry(self.right2, width=30, state=NORMAL, text=self.entryAllocationAmount).grid(row=0, column=1)
 
-        self.entryKValue = StringVar()
-        self.kValue = Label(self.right2, text="k-value:").grid(row=1, column=0)
-        self.kValue = Entry(self.right2, width=30, state=NORMAL, text=self.entryKValue).grid(row=1, column=1)
-
         self.entryWeekNumber = IntVar()
         self.weekNumber = Label(self.right2, text="Allocating Week Number").grid(row=2, column=0)
         self.weekNumber = Entry(self.right2, width=30, state=NORMAL, text=self.entryWeekNumber).grid(row=2, column=1)
-
-        self.moesBBQ = Label(self.right2, text="Do I need this?").grid(row=3, column=0)
-        self.moesBBQ = Entry(self.right2, width=30, state="readonly").grid(row=3, column=1)
 
         self.loadFirstInputCSVFile = Button(self.left1, width=75, text="Load Weekly Demand", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E + W)
         self.file_Path = Label(self.left1, text="File Path").grid(row=1, column=0)
@@ -100,7 +97,7 @@ class simulation:
                 self.dataFirstSet.append(row)
             file.close()
             self.process_Data.config(state="active")
-
+            del self.dataFirstSet[0]
         except:
             messagebox.showwarning("Oh NO!", "Invalid CSV File")
             return None
@@ -125,37 +122,52 @@ class simulation:
                 self.dataSecondSet.append(row)
             file.close()
             self.process_Data.config(state="active")
+            del self.dataSecondSet[0]
         except:
             messagebox.showwarning("Oh NO!", "Invalid CSV File")
             return None
 
 
-                
+
     def processDataButtonClicked(self):
-        allocationAmount = self.entryAllocationAmount.get()
+        allocationAmount = int(self.entryAllocationAmount.get())
         weekNumber = self.entryWeekNumber.get()
-        kValue = self.entryKValue.get()
-        print(allocationAmount, weekNumber, kValue)
+        self.totalOrders =0
 
 
 
         if len(self.dataFirstSet[0])==5:
-            weeklyOutlook = weeklyDemand(self, self.dataFirstSet, weekNumber, kValue)
+            weeklyOutlook = weeklyDemand(self, self.dataFirstSet, weekNumber, self.kValue)
         else:
-            weeklyOutlook = weeklyDemand(self, self.dataSecondSet, weekNumber, kValue)
+            weeklyOutlook = weeklyDemand(self, self.dataSecondSet, weekNumber, self.kValue)
         if len(self.dataFirstSet[0])==9:
-            self.dataSecondSet= 0
             updatedWeeklyOutlook = masterData(self, self.dataFirstSet, weeklyOutlook, weekNumber)
         else:
-            self.dataFirstSet = 0
             updatedWeeklyOutlook= masterData(self, self.dataSecondSet, weeklyOutlook, weekNumber)
+
 
         finalWeeklyOutlook = determineOrderQuantity(self, updatedWeeklyOutlook)
 
+        self.checkOrderConstraint(finalWeeklyOutlook)
+        self.counter += 1
+        print(self.counter)
+        if self.totalOrders > allocationAmount:
+            self.kValue = self.kValue - .0000001
+            self.processDataButtonClicked()
+
         self.outputToCSV(finalWeeklyOutlook)
+
+    def checkOrderConstraint(self, finalWeeklyOutlook):
+        for row in finalWeeklyOutlook:
+            self.totalOrders += row[11]
+        self.totalOrders = int(self.totalOrders)
+        for row in self.dataFirstSet:
+            del row[5]
+        return None
 
     def outputToCSV(self, finalWeeklyOutlook):
         # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
+        print(self.kValue)
         f = filedialog.asksaveasfilename()
 
         self.outputCSVFileEntry.config(state=NORMAL)
@@ -168,10 +180,13 @@ class simulation:
         csvWriter.writerow(
             ["sku", "plant", "avgAFRatio", "sigmaAFRatio", "forecastedDemand", "muForecast", "sigmaForecast",
              "forecastVariability", "beginningInventoryVolume", "retailerDemand", "supply", "orderQTY",
-             "onhand+onOrder-Demand"])
+             "onhand+onOrder-Demand", "Supply+Inventory"])
         for row in finalWeeklyOutlook:
             csvWriter.writerow(row)
         file.close()
+
+        if self.counter != 0:
+            return None
     
 
             

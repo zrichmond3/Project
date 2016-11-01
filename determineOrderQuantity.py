@@ -8,6 +8,8 @@ def determineOrderQuantity(self, data):
             orderQuantity=row[7]-onHandOnOrderDemand
         else:
             orderQuantity = 0
-        row.append(orderQuantity)
+        sum= round(orderQuantity)+onHandOnOrderDemand
+        row.append(round(orderQuantity))
         row.append(onHandOnOrderDemand)
+        row.append(sum)
     return data
