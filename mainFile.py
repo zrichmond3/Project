@@ -13,10 +13,7 @@ class simulation:
         self.myTOPFrame.pack(side=TOP)
         self.myLeftFrame = Frame(w)
         self.myLeftFrame.pack(side=LEFT)
-        self.myRightFrame = Frame(w)
-        self.myRightFrame.pack(side=RIGHT)
-        self.myBottomFrame = Frame(w)
-        self.myBottomFrame.pack(side=BOTTOM)
+
 
         self.left0 = Frame(self.myLeftFrame)
         self.left0.pack()
@@ -26,10 +23,7 @@ class simulation:
         self.left2.pack()
         self.left3 = Frame(self.myLeftFrame)
         self.left3.pack()
-        self.right1 = Frame(self.myRightFrame)
-        self.right1.pack()
-        self.right2 = Frame(self.myRightFrame)
-        self.right2.pack()
+
 
         url = "http://w4aql.gtorg.gatech.edu/images/buzzzap.gif"
         response = urllib.request.urlopen(url)
@@ -39,40 +33,38 @@ class simulation:
         self.mainImage = PhotoImage(data=b64_data)
 
         self.totalOrders = 0
-        self.kValue = .9999999
+        self.kValue = .99
         self.counter = 0
 
         self.photoLabel = Label(self.myTOPFrame, image=self.mainImage)
         self.photoLabel.grid(row=0, column=0)
 
-        self.weekTitle = Label(self.right1, text="Enter Some Cool SHIT for the w-w-weee-kk").grid(row=0, columnspan=1, sticky= E+W)
+        self.loadFirstInputCSVFile = Button(self.left1, width=78, text="Load Weekly Demand", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E+W)
+        self.loadSecondInputCSVFile = Button(self.left1, width=78, text="Load Master Data", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
+
+        self.entryWeekNumber = StringVar()
+        self.weekNumber = Label(self.left2, text="Allocating Week Number:").grid(row=0, column=0, sticky=E)
+        self.weekNumber = Entry(self.left2, width=60, state=NORMAL, text=self.entryWeekNumber).grid(row=0, column=1, sticky=W)
+
 
         self.entryAllocationAmount = StringVar()
-        self.allocationAmount = Label(self.right2, text="Allocation Amount:").grid(row=0, column=0)
-        self.allocationAmount = Entry(self.right2, width=30, state=NORMAL, text=self.entryAllocationAmount).grid(row=0, column=1)
+        self.allocationAmount = Label(self.left2, text="Allocation Amount:").grid(row=1, column=0, sticky=E)
+        self.allocationAmount = Entry(self.left2, width=60, state=NORMAL, text=self.entryAllocationAmount).grid(row=1, column=1, sticky=W)
 
-        self.entryWeekNumber = IntVar()
-        self.weekNumber = Label(self.right2, text="Allocating Week Number").grid(row=2, column=0)
-        self.weekNumber = Entry(self.right2, width=30, state=NORMAL, text=self.entryWeekNumber).grid(row=2, column=1)
 
-        self.loadFirstInputCSVFile = Button(self.left1, width=75, text="Load Weekly Demand", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E + W)
-        self.file_Path = Label(self.left1, text="File Path").grid(row=1, column=0)
-        self.loadSecondInputCSVFile = Button(self.left1, width=75, text="Load Master Data", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
-        self.file_Path2=Label(self.left1, text="File Path").grid(row=2, column=0)
-
-        self.inputFirstCSVFile = Label(self.left2, text="Input First CSV File").grid(row=0, column=0)
+        self.inputFirstCSVFile = Label(self.left2, text="Weekly Demand File Path:").grid(row=2, column=0, sticky=E)
         self.inputFirstCSVFileEntry = Entry(self.left2, width=60, state="readonly")
-        self.inputFirstCSVFileEntry.grid(row=0, column=1)
+        self.inputFirstCSVFileEntry.grid(row=2, column=1)
 
-        self.inputSecondCSVFile= Label(self.left2, text ="Input Second CSV File").grid(row=1, column=0)
+        self.inputSecondCSVFile= Label(self.left2, text ="Master Data File Path:").grid(row=3, column=0, sticky=E)
         self.inputSecondCSVFileEntry=Entry(self.left2, width =60, state="readonly")
-        self.inputSecondCSVFileEntry.grid(row=1, column=1)
+        self.inputSecondCSVFileEntry.grid(row=3, column=1)
 
-        self.outputCSVFile = Label(self.left2, text="Output CSV File").grid(row=2, column=0)
+        self.outputCSVFile = Label(self.left2, text="Output File Path:").grid(row=5, column=0, sticky=E)
         self.outputCSVFileEntry = Entry(self.left2, width=60, state="readonly")
-        self.outputCSVFileEntry.grid(row=2, column=1)
+        self.outputCSVFileEntry.grid(row=5, column=1)
 
-        self.process_Data = Button(self.left3, text="Process Data", width=75, state="disabled", command=self.processDataButtonClicked)
+        self.process_Data = Button(self.left3, text="Process Data", width=78, state="disabled", command=self.processDataButtonClicked)
         self.process_Data.grid(row=0, column=0, sticky=E+W)
 
         
@@ -131,7 +123,7 @@ class simulation:
 
     def processDataButtonClicked(self):
         allocationAmount = int(self.entryAllocationAmount.get())
-        weekNumber = self.entryWeekNumber.get()
+        weekNumber = int(self.entryWeekNumber.get())
         self.totalOrders =0
 
 
@@ -150,9 +142,9 @@ class simulation:
 
         self.checkOrderConstraint(finalWeeklyOutlook)
         self.counter += 1
-        print(self.counter)
+        print("iteration: "+self.counter)
         if self.totalOrders > allocationAmount:
-            self.kValue = self.kValue - .0000001
+            self.kValue = self.kValue - .01
             self.processDataButtonClicked()
 
         self.outputToCSV(finalWeeklyOutlook)
@@ -167,7 +159,7 @@ class simulation:
 
     def outputToCSV(self, finalWeeklyOutlook):
         # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
-        print(self.kValue)
+        print("K-Value: "+self.kValue)
         f = filedialog.asksaveasfilename()
 
         self.outputCSVFileEntry.config(state=NORMAL)
@@ -184,13 +176,11 @@ class simulation:
         for row in finalWeeklyOutlook:
             csvWriter.writerow(row)
         file.close()
-
-        if self.counter != 0:
-            return None
+        return None
     
 
             
 w = Tk()
 app=simulation(w)
-w.title("Senior Design Simulation")
+w.title("Senior Design")
 w.mainloop()
