@@ -3,8 +3,6 @@
 # SciPy, Statistics, cx_Freeze, and all other packages are imported through PyCharm.
 # If a user clones the this project and runs it individual, all files will need to be in the same folder and all imports will need to be installed relevative to their operating system
 
-
-
 #Imports
 from tkinter import *
 from tkinter import filedialog
