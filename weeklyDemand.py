@@ -1,13 +1,15 @@
-
+#import statistical packages
 from statistics import *
 from scipy.stats import norm
+
+
 def weeklyDemand(self, data, weekNumber, kValue):
 
     skuList =[]
     plantList =[]
     weeklyOutlookList = []
     for row in data:
-
+        #c
         row[3]=float(row[3])
         row[4]=float(row[4])
         row[0]=int(row[0])
