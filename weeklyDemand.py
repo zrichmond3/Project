@@ -2,7 +2,6 @@
 from statistics import *
 from scipy.stats import norm
 
-
 def weeklyDemand(self, data, weekNumber, kValue):
 
     skuList =[] #Sku List, need it for triple for loop below
@@ -42,3 +41,4 @@ def weeklyDemand(self, data, weekNumber, kValue):
             if weeklyOutlook not in weeklyOutlookList:
                 weeklyOutlookList.append(weeklyOutlook)
     return weeklyOutlookList #this is a list in the form of [[weeklyOutlook 1],[weeklyOutlook 2],...,[weeklyOutlook N]]
+#weeklyOutlookList, what each nested list looks like -> [sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability]

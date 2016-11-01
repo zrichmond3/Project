@@ -165,7 +165,7 @@ class simulation:
 
         #Counters the number of iterations until totalOrders is less than allocationAmount
         self.counter += 1
-        print("iteration: "+self.counter)
+        print("iteration: ", self.counter)
 
         #Checks terminating condition
         if self.totalOrders > allocationAmount:
@@ -191,7 +191,7 @@ class simulation:
 #This function writes the data after interations to a CSV file
     def outputToCSV(self, finalWeeklyOutlook):
         # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
-        print("K-Value: "+self.kValue)
+        print("K-Value: ", self.kValue)
         f = filedialog.asksaveasfilename()
 
         self.outputCSVFileEntry.config(state=NORMAL)
