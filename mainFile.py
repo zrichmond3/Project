@@ -153,7 +153,6 @@ class simulation:
         #Converts week number and allocation to integers
         allocationAmount = int(self.entryAllocationAmount.get())
         weekNumber = int(self.entryWeekNumber.get())
-        print("all good", allocationAmount, weekNumber)
 
         self.dataFirstSet = convertWeeklyDemand(self, self.dataFirstSet)
         self.dataSecondSet = convertMasterData(self, self.dataSecondSet)
