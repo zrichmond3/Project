@@ -227,7 +227,7 @@ class simulation:
         csvWriter.writerow(
             ["sku", "plant", "avgAFRatio", "sigmaAFRatio", "forecastedDemand", "muForecast", "sigmaForecast",
              "forecastVariability", "beginningInventoryVolume", "retailerDemand", "supply", "orderQTY",
-             "onhand+onOrder-Demand", "Supply+Inventory"])
+             "onhand+onOrder-Demand", "Supply+Inventory","Expected OOS"])
         for row in finalWeeklyOutlook:
             csvWriter.writerow(row)
         file.close()
