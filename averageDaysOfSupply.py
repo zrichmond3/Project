@@ -34,7 +34,6 @@ def averageDaysOfSupply(self, weeklyDemand, mData, weekNumber,allocationAmount):
         week.append(beginningInventoryVolume)
         week.append(retailerDemand)
         week.append(supply)
-
     for i in averageDOSList:
         beginningInventoryWeekNumber = i[4]+i[6]-i[5]#BeginningInventoryVolume+supply-retailerDemand
         i.append(beginningInventoryWeekNumber)

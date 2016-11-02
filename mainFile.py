@@ -74,10 +74,14 @@ class simulation:
         self.inputSecondCSVFileEntry.grid(row=3, column=1)
 
 #Output file location, needs to be saved as file.csv
-        self.outputCSVFile = Label(self.left2, text="Output File Path:").grid(row=5, column=0, sticky=E)
+        self.outputCSVFile = Label(self.left2, text="Our Process:").grid(row=5, column=0, sticky=E)
         self.outputCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.outputCSVFileEntry.grid(row=5, column=1)
 
+
+        self.outputCSVFile1 = Label(self.left2, text="Their Process:").grid(row=6, column=0, sticky=E)
+        self.outputCSVFileEntry1 = Entry(self.left2, width=60, state="readonly")
+        self.outputCSVFileEntry1.grid(row=6, column=1)
 #After all the data has been entered, click process button
         self.process_Data = Button(self.left3, text="Process Data", width=78, state="disabled", command=self.processDataButtonClicked)
         self.process_Data.grid(row=0, column=0, sticky=E+W)
@@ -188,6 +192,7 @@ class simulation:
 
         #If all goes well, calles this function to write data to a csv file
         self.outputToCSV(finalWeeklyOutlook)
+        self.outputToCSV1(output)
 
 #The function that is called at the end of processDataButtonClicked to get the totalOrders
     def checkOrderConstraint(self, finalWeeklyOutlook):
@@ -206,7 +211,7 @@ class simulation:
     def outputToCSV(self, finalWeeklyOutlook):
         # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
         print("K-Value: ", self.kValue)
-        f = filedialog.asksaveasfilename()
+        f = filedialog.asksaveasfilename(message="Our Process")
 
         self.outputCSVFileEntry.config(state=NORMAL)
         self.outputCSVFileEntry.delete(0, END)
@@ -220,6 +225,25 @@ class simulation:
              "forecastVariability", "beginningInventoryVolume", "retailerDemand", "supply", "orderQTY",
              "onhand+onOrder-Demand", "Supply+Inventory"])
         for row in finalWeeklyOutlook:
+            csvWriter.writerow(row)
+        file.close()
+        return None
+    def outputToCSV1(self, output):
+        # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
+        print("K-Value: ", self.kValue)
+        f = filedialog.asksaveasfilename(message="Thier Process")
+        self.outputCSVFileEntry1.config(state=NORMAL)
+        self.outputCSVFileEntry1.delete(0, END)
+        self.outputCSVFileEntry1.insert(0, f)
+        self.outputCSVFileEntry1.config(state="readonly")
+
+        file = open(f, "w", newline="")
+        csvWriter = csv.writer(file)
+        csvWriter.writerow(
+            ["plant", "weekNumber", "sku", "averageDOS", "beginningInventoryVolume", "retailerDemand", "supply",
+             "beginningInventoryWeekNumber", "fairShareInventory", "underOver", "rawAllocation", "netSuppy"]
+        )
+        for row in output:
             csvWriter.writerow(row)
         file.close()
         return None
