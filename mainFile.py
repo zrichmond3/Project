@@ -14,7 +14,9 @@ from masterData import *
 from averageDaysOfSupply import *
 from convertMasterData import *
 from convertWeeklyDemand import *
+from expectedOOS import *
 from tkinter import messagebox
+
 
 #Class created to run GUI
 class simulation:
@@ -192,7 +194,8 @@ class simulation:
             self.processDataButtonClicked()
 
         #If all goes well, calles this function to write data to a csv file
-        self.outputToCSV(finalWeeklyOutlook)
+        finalData = expectedOOS(self, finalWeeklyOutlook)
+        self.outputToCSV(finalData)
         self.outputToCSV1(output)
 
 #The function that is called at the end of processDataButtonClicked to get the totalOrders
