@@ -1,6 +1,7 @@
 #import statistical packages
-from statistics import *
 from scipy.stats import norm
+from numpy import mean, std
+import warnings
 
 def weeklyDemand(self, data, weekNumber, kValue):
 
@@ -8,9 +9,9 @@ def weeklyDemand(self, data, weekNumber, kValue):
     plantList =[] #Plant List, need it for triple for loop below
     weeklyOutlookList = [] #This list will be returned
     for row in data: #iteration through the data and to make it usable
-        # row[3]=float(row[3]) #Weekly Demand - change from string to a float
-        # row[4]=float(row[4]) #Forecast - change from string to a float
-        # row[0]=int(row[0]) #Week Number - Change from string to an int
+        row[3]=float(row[3]) #Weekly Demand - change from string to a float
+        row[4]=float(row[4]) #Forecast - change from string to a float
+        row[0]=int(row[0]) #Week Number - Change from string to an int
         if float(row[4]) != 0: #Prevents dividing by 0 for AF Ratio
             afRatio = row[3]/row[4] #creates AF Ratio
             row.append(afRatio) #appends data to add the AF Ratio
@@ -30,11 +31,13 @@ def weeklyDemand(self, data, weekNumber, kValue):
                     afRatioList.append(row[5])
                 if plant == row[1] and sku == row[2] and row[0] == weekNumber: #grabs the correct forecasted demand for calculations
                     forecastedDemand = row[4]
-            avgAFRatio = mean(afRatioList) #finds the mean of the afRatioList
-            sigmaAFRatio = pstdev(afRatioList) #finds the standard deviation of the afRatioList
-            muForecast = forecastedDemand*avgAFRatio #this should be obvious based on line 34
-            sigmaForecast = forecastedDemand*sigmaAFRatio #this should be obvious based on line 35
-            forecastVariability = norm.ppf(kValue, loc=muForecast, scale=sigmaForecast)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                avgAFRatio = mean(afRatioList) #finds the mean of the afRatioList
+                sigmaAFRatio = std(afRatioList) #finds the standard deviation of the afRatioList
+                muForecast = forecastedDemand*avgAFRatio #this should be obvious based on line 34
+                sigmaForecast = forecastedDemand*sigmaAFRatio #this should be obvious based on line 35
+                forecastVariability = norm.ppf(kValue, loc=muForecast, scale=sigmaForecast)
             #The above is the equivalent norm.inv function in Excel from SciPy
             weeklyOutlook = [sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability]
             #The above creates a list and based on line 42, if this list is not already in the weeklyOutlookList then it is added

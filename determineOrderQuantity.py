@@ -8,6 +8,8 @@ def determineOrderQuantity(self, data):
 
     for row in data:
         onHandOnOrderDemand = row[8]+row[10]-row[9]#BeginningInventoryVolume+supply-retailerDemand
+        if onHandOnOrderDemand <0:
+            onHandOnOrderDemand=0
         if row[7]>onHandOnOrderDemand: #if forecastVariability is greater than onHandOnOrderDemand
             orderQuantity=row[7]-onHandOnOrderDemand #order quantity = forecastVariablity - onHandOnOrderDemand
         else:
