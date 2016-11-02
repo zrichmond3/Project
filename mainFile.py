@@ -225,9 +225,9 @@ class simulation:
         file = open(f, "w", newline="")
         csvWriter = csv.writer(file)
         csvWriter.writerow(
-            ["sku", "plant", "avgAFRatio", "sigmaAFRatio", "forecastedDemand", "muForecast", "sigmaForecast",
-             "forecastVariability", "beginningInventoryVolume", "retailerDemand", "supply", "orderQTY",
-             "onhand+onOrder-Demand", "Supply+Inventory","Expected OOS"])
+            ["Sku", "Plant", "Average AF Ratio", "Sigma AFRatio", "Forecasted Demand", "Mu Forecast", "Sigma Forecast",
+             "Forecast With Variability", "Beginning Inventory Volume", "Retailer Demand", "Supply", "Order Quantity",
+             "OnHand+OnOrder-Demand", "Supply+Inventory","Expected OOS"])
         for row in finalWeeklyOutlook:
             csvWriter.writerow(row)
         file.close()
@@ -244,8 +244,8 @@ class simulation:
         file = open(f, "w", newline="")
         csvWriter = csv.writer(file)
         csvWriter.writerow(
-            ["plant", "weekNumber", "sku", "averageDOS", "beginningInventoryVolume", "retailerDemand", "supply",
-             "beginningInventoryWeekNumber", "fairShareInventory", "underOver", "rawAllocation", "netSuppy"]
+            ["Plant", "WeekNumber", "Sku", "Average Days Of Supply", "Beginning Inventory Volume", "Retailer Demand", "Supply",
+             "Beginning Inventory Week Number", "Fair Share Inventory", "Under Over", "Raw Allocation", "Net Suppy"]
         )
         for row in output:
             csvWriter.writerow(row)
