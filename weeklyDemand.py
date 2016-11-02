@@ -27,9 +27,12 @@ def weeklyDemand(self, data, weekNumber, kValue):
         for plant in plantList:
             afRatioList = [] #Placing this list here allows for it to be resetted for each SKU Plant combo
             for row in data:
-                if plant == row[1] and sku == row[2] and row[0]<=(weekNumber-2): #appends afRatioList for the correct SKU Plant combo
+                weeklyDemandPlant = row[1]
+                weeklyDemandSKU = row[2]
+                weeklyDemandWeekNumber = row[0]
+                if plant == weeklyDemandPlant and sku == weeklyDemandSKU and weeklyDemandWeekNumber<=(weekNumber-2): #appends afRatioList for the correct SKU Plant combo
                     afRatioList.append(row[5])
-                if plant == row[1] and sku == row[2] and row[0] == weekNumber: #grabs the correct forecasted demand for calculations
+                if plant == weeklyDemandPlant and sku == weeklyDemandSKU and weeklyDemandWeekNumber == weekNumber: #grabs the correct forecasted demand for calculations
                     forecastedDemand = row[4]
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", category=RuntimeWarning)
