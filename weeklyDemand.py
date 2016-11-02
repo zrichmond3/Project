@@ -8,9 +8,9 @@ def weeklyDemand(self, data, weekNumber, kValue):
     plantList =[] #Plant List, need it for triple for loop below
     weeklyOutlookList = [] #This list will be returned
     for row in data: #iteration through the data and to make it usable
-        row[3]=float(row[3]) #Weekly Demand - change from string to a float
-        row[4]=float(row[4]) #Forecast - change from string to a float
-        row[0]=int(row[0]) #Week Number - Change from string to an int
+        # row[3]=float(row[3]) #Weekly Demand - change from string to a float
+        # row[4]=float(row[4]) #Forecast - change from string to a float
+        # row[0]=int(row[0]) #Week Number - Change from string to an int
         if float(row[4]) != 0: #Prevents dividing by 0 for AF Ratio
             afRatio = row[3]/row[4] #creates AF Ratio
             row.append(afRatio) #appends data to add the AF Ratio

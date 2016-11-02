@@ -11,6 +11,9 @@ import urllib.request
 from weeklyDemand import *
 from determineOrderQuantity import *
 from masterData import *
+from averageDaysOfSupply import *
+from convertMasterData import *
+from convertWeeklyDemand import *
 
 #Class created to run GUI
 class simulation:
@@ -107,6 +110,8 @@ class simulation:
             return None
 
 #Asks for the file for Master Data
+
+#Asks for the file for Master Data
     def loadSecondCSVclicked(self):
 
         self.inputSecondCSVFILE=filedialog.askopenfilename()
@@ -134,24 +139,33 @@ class simulation:
             return None
 
 #The beginning of processes the data
+
+#Do cool stuff
     def processDataButtonClicked(self):
 
         #Converts week number and allocation to integers
         allocationAmount = int(self.entryAllocationAmount.get())
         weekNumber = int(self.entryWeekNumber.get())
+        print("all good", allocationAmount, weekNumber)
+
+        self.dataFirstSet = convertWeeklyDemand(self, self.dataFirstSet)
+        self.dataSecondSet = convertMasterData(self, self.dataSecondSet)
+
+        output =averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
+        print(output[0])
 
         #resets totalOrders to zero, this is part of the terminating condition for iterating through K-Values
         self.totalOrders =0
 
         #This condition block is from an old iteration of the code, and it needs to changed - all it is a validation
         if len(self.dataFirstSet[0])==5:
-            #sets the return of weeklyDemand to a usable variable
+        #sets the return of weeklyDemand to a usable variable
             weeklyOutlook = weeklyDemand(self, self.dataFirstSet, weekNumber, self.kValue)
         else:
             weeklyOutlook = weeklyDemand(self, self.dataSecondSet, weekNumber, self.kValue)
 
         if len(self.dataFirstSet[0])==9:
-            #sets the return of masterData to a usable variable
+        #sets the return of masterData to a usable variable
             updatedWeeklyOutlook = masterData(self, self.dataFirstSet, weeklyOutlook, weekNumber)
         else:
             updatedWeeklyOutlook= masterData(self, self.dataSecondSet, weeklyOutlook, weekNumber)
@@ -159,8 +173,8 @@ class simulation:
         #sets the return of determineOrderQuantity to a usable variable
         finalWeeklyOutlook = determineOrderQuantity(self, updatedWeeklyOutlook)
 
-#This function checks to makes sure totalOrders is less than allocationAmount, if not it recalls the above with a lesser K-Value
-#This uses a lot of resources and a better way would be to create an Async Callback
+        #This function checks to makes sure totalOrders is less than allocationAmount, if not it recalls the above with a lesser K-Value
+        #This uses a lot of resources and a better way would be to create an Async Callback
         self.checkOrderConstraint(finalWeeklyOutlook)
 
         #Counters the number of iterations until totalOrders is less than allocationAmount
