@@ -4,20 +4,19 @@
 # If a user clones the this project and runs it individual, all files will need to be in the same folder and all imports will need to be installed relevative to their operating system
 
 #Imports
-from tkinter import *
-from tkinter import filedialog
 import csv
 import urllib.request
-from weeklyDemand import *
-from determineOrderQuantity import *
-from masterData import *
-from averageDaysOfSupply import *
-from convertMasterData import *
-from convertWeeklyDemand import *
-from expectedOOS import *
-from thirdModel import *
+from tkinter import *
+from tkinter import filedialog
 from tkinter import messagebox
 
+from conversions.stringToNumber import *
+from expectedOOS import *
+from firstModel.masterData import *
+from secondModel.averageDaysOfSupply import *
+from secondModel.determineOrderQuantity import *
+from thirdModel import *
+from firstModel.weeklyDemand import *
 
 #Class created to run GUI
 class simulation:
@@ -49,7 +48,8 @@ class simulation:
 #These values can be used throughout the code because they are global
         self.totalOrders = 0
         self.kValue = .999
-        self.counter = 0
+        self.switch = True
+        self.iteration = 0
 #Image
         self.photoLabel = Label(self.myTOPFrame, image=self.mainImage)
         self.photoLabel.grid(row=0, column=0)
@@ -153,49 +153,40 @@ class simulation:
 
 #Do cool stuff
     def processDataButtonClicked(self):
-        """ """
 
-        #Converts week number and allocation to integers
         allocationAmount = int(self.entryAllocationAmount.get())
         weekNumber = int(self.entryWeekNumber.get())
-        if self.convertData == 0:
-            self.dataFirstSet = convertWeeklyDemand(self, self.dataFirstSet)
-            self.dataSecondSet = convertMasterData(self, self.dataSecondSet)
-            output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
-            thirdModelOutput = thirdModel(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
-            self.convertData = 1
-            print("Average Days of Supply: ", output[0])
+
+
+        if self.switch == True:
+            self.dataFirstSet, self.dataSecondSet = stringToNumber(self.dataFirstSet,self.dataSecondSet)
+            self.output = averageDaysOfSupply( self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
+            thirdModelOutput = thirdModel(self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
+            self.switch = False
+            print("Average Days of Supply: ", self.output[0])
             print("Third Model Ouput: ", thirdModelOutput[0])
 
-        #resets totalOrders to zero, this is part of the terminating condition for iterating through K-Values
         self.totalOrders = 0
-
 
         weeklyOutlook = weeklyDemand( self.dataFirstSet, weekNumber, self.kValue)
         updatedWeeklyOutlook= masterData( self.dataSecondSet, weeklyOutlook, weekNumber)
 
-        #sets the return of determineOrderQuantity to a usable variable
         finalWeeklyOutlook = determineOrderQuantity(self, updatedWeeklyOutlook)
 
-        #This function checks to makes sure totalOrders is less than allocationAmount, if not it recalls the above with a lesser K-Value
-        #This uses a lot of resources and a better way would be to create an Async Callback
         self.checkOrderConstraint(finalWeeklyOutlook)
 
-        #Counters the number of iterations until totalOrders is less than allocationAmount
-        self.counter += 1
-        print("iteration: ", self.counter)
+        self.iteration += 1
+        print("1st Model Iteration: ", self.iteration)
 
-        #Checks terminating condition
         if self.totalOrders > allocationAmount:
             self.kValue = self.kValue - .001
             self.processDataButtonClicked()
 
-        #If all goes well, calles this function to write data to a csv file
         finalData = expectedOOS(self, finalWeeklyOutlook)
-        self.outputToCSV(finalData)
-        self.outputToCSV1(output)
 
-#The function that is called at the end of processDataButtonClicked to get the totalOrders
+        self.outputToCSV(finalData)
+        self.outputToCSV1(self.output)
+
     def checkOrderConstraint(self, finalWeeklyOutlook):
 
         #sums the totalOrders
@@ -208,7 +199,6 @@ class simulation:
             del row[5]
         return None
 
-#This function writes the data after interations to a CSV file
     def outputToCSV(self, finalWeeklyOutlook):
         # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
         print("K-Value: ", self.kValue)
@@ -250,7 +240,7 @@ class simulation:
         return None
     
 
-#Stuff for the GUI
+
 w = Tk()
 app=simulation(w)
 w.title("Senior Design")

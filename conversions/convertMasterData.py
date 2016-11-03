@@ -1,5 +1,5 @@
 
-def convertMasterData(self, data):
+def convertMasterData( data):
     #Below makes the data usable
     for row in data:
         row[1] = int(row[1]) #changes Week Number from string to int

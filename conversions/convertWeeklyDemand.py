@@ -1,5 +1,5 @@
 
-def convertWeeklyDemand(self, data):
+def convertWeeklyDemand( data):
 
     for row in data: #iteration through the data and to make it usable
         row[3]=float(row[3]) #Weekly Demand - change from string to a float

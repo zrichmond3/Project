@@ -1,8 +1,10 @@
-from beginningInventoryForWeekNumber import *
-from systemDOS import *
-from fairShareInventory import *
+from secondModel.beginningInventoryForWeekNumber import *
+from secondModel.fairShareInventory import *
 
-def averageDaysOfSupply(self, weeklyDemand, mData, weekNumber,allocationAmount):
+from secondModel.systemDOS import *
+
+
+def averageDaysOfSupply( weeklyDemand, mData, weekNumber,allocationAmount):
     skuList =[] #Sku List, need it for triple for loop below
     plantList =[] #Plant List, need it for triple for loop below
     averageDOSList = [] #This list will be returned
