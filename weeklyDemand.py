@@ -3,7 +3,7 @@ from scipy.stats import norm
 from numpy import mean, std
 import warnings
 
-def weeklyDemand(self, data, weekNumber, kValue):
+def weeklyDemand( data, weekNumber, kValue):
 
     skuList =[] #Sku List, need it for triple for loop below
     plantList =[] #Plant List, need it for triple for loop below

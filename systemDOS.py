@@ -6,4 +6,4 @@ def systemDOS(averageDOSList):
         sumOfBeginningInventoryForWeeKNumber += j[7]
         sumOfAverageDaysOfSupply += j[3]
     value = sumOfBeginningInventoryForWeeKNumber/sumOfAverageDaysOfSupply
-    return value
+    return value, sumOfAverageDaysOfSupply

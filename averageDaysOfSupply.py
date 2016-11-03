@@ -26,18 +26,23 @@ def averageDaysOfSupply(self, weeklyDemand, mData, weekNumber,allocationAmount):
 
     averageDOSList = beginningInventoryForWeekNumber(averageDOSList, mData, weekNumber)
 
-    systemDaysOfSupply = systemDOS(averageDOSList)
+    systemDaysOfSupply, sumOfADS = systemDOS(averageDOSList)
 
+
+    print(systemDaysOfSupply)
+    print(sumOfADS)
     averageDOSList = fairShare(averageDOSList, systemDaysOfSupply)
 
-    #Place in function
+    #Place in functionblah
     for d in averageDOSList:
         underOver= d[8]-d[7]
         d.append(underOver)
     for row in averageDOSList:
-        rawAllocation= (row[3]/systemDaysOfSupply)*allocationAmount
+        rawAllocation= (row[3]/sumOfADS)*allocationAmount
         row.append(rawAllocation)
         netSuppy = rawAllocation + row[9]
+        if netSuppy < 0:
+            netSuppy = 0
         row.append(netSuppy)
 
 

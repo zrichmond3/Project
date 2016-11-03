@@ -15,6 +15,7 @@ from averageDaysOfSupply import *
 from convertMasterData import *
 from convertWeeklyDemand import *
 from expectedOOS import *
+from thirdModel import *
 from tkinter import messagebox
 
 
@@ -47,7 +48,7 @@ class simulation:
         self.mainImage = PhotoImage(data=b64_data)
 #These values can be used throughout the code because they are global
         self.totalOrders = 0
-        self.kValue = .99
+        self.kValue = .999
         self.counter = 0
 #Image
         self.photoLabel = Label(self.myTOPFrame, image=self.mainImage)
@@ -88,6 +89,9 @@ class simulation:
 #After all the data has been entered, click process button
         self.process_Data = Button(self.left3, text="Process Data", width=78, state="disabled", command=self.processDataButtonClicked)
         self.process_Data.grid(row=0, column=0, sticky=E+W)
+
+
+        self.convertData = 0
 
 #Asks for the file for Weekly Demand
     def loadFirstCSVclicked(self):
@@ -149,32 +153,26 @@ class simulation:
 
 #Do cool stuff
     def processDataButtonClicked(self):
+        """ """
 
         #Converts week number and allocation to integers
         allocationAmount = int(self.entryAllocationAmount.get())
         weekNumber = int(self.entryWeekNumber.get())
-
-        self.dataFirstSet = convertWeeklyDemand(self, self.dataFirstSet)
-        self.dataSecondSet = convertMasterData(self, self.dataSecondSet)
-
-        output =averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
-        print(output[0])
+        if self.convertData == 0:
+            self.dataFirstSet = convertWeeklyDemand(self, self.dataFirstSet)
+            self.dataSecondSet = convertMasterData(self, self.dataSecondSet)
+            output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
+            thirdModelOutput = thirdModel(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
+            self.convertData = 1
+            print("Average Days of Supply: ", output[0])
+            print("Third Model Ouput: ", thirdModelOutput[0])
 
         #resets totalOrders to zero, this is part of the terminating condition for iterating through K-Values
-        self.totalOrders =0
+        self.totalOrders = 0
 
-        #This condition block is from an old iteration of the code, and it needs to changed - all it is a validation
-        if len(self.dataFirstSet[0])==5:
-        #sets the return of weeklyDemand to a usable variable
-            weeklyOutlook = weeklyDemand(self, self.dataFirstSet, weekNumber, self.kValue)
-        else:
-            weeklyOutlook = weeklyDemand(self, self.dataSecondSet, weekNumber, self.kValue)
 
-        if len(self.dataFirstSet[0])==9:
-        #sets the return of masterData to a usable variable
-            updatedWeeklyOutlook = masterData(self, self.dataFirstSet, weeklyOutlook, weekNumber)
-        else:
-            updatedWeeklyOutlook= masterData(self, self.dataSecondSet, weeklyOutlook, weekNumber)
+        weeklyOutlook = weeklyDemand( self.dataFirstSet, weekNumber, self.kValue)
+        updatedWeeklyOutlook= masterData( self.dataSecondSet, weeklyOutlook, weekNumber)
 
         #sets the return of determineOrderQuantity to a usable variable
         finalWeeklyOutlook = determineOrderQuantity(self, updatedWeeklyOutlook)
@@ -189,7 +187,7 @@ class simulation:
 
         #Checks terminating condition
         if self.totalOrders > allocationAmount:
-            self.kValue = self.kValue - .01
+            self.kValue = self.kValue - .001
             self.processDataButtonClicked()
 
         #If all goes well, calles this function to write data to a csv file

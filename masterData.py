@@ -1,6 +1,6 @@
 #no imports
 
-def masterData(self, data, weeklyOutlook, weekNumber):
+def masterData( data, weeklyOutlook, weekNumber):
 #Below is what each row in the Master Data File should look lilke
 #Day of Week, Week Number, Date Format, Plant Name, Material, Material Description, Retailer Demand, OOS quantity, BeginningInventoryVolume	, Supply
 
