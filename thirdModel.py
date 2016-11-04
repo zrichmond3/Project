@@ -54,8 +54,11 @@ def thirdModel( weeklyDemandData, masterData, weekNumber, allocationAmount):
                 weeklyDemandWeekNumber = row[3]
                 if plant == weeklyDemandPlant and sku == weeklyDemandSKU and weeklyDemandWeekNumber == weekNumber:
                     weeklyDemandForecast = row[4]
+                    forecastWithVar = row[7]
                     averageDOS = weeklyDemandForecast / 6
+                    avgDOSFV = forecastWithVar/6
                     row.append(averageDOS)
+                    row.append(avgDOSFV)
 
     for arrayList in output:
         beginningInventoryVolume = 0
@@ -77,9 +80,10 @@ def thirdModel( weeklyDemandData, masterData, weekNumber, allocationAmount):
         arrayList.append(supply)
     print(output[0])
     for row in output:
-        beginningInventoryVolume=row[9]
-        supply=row[10]
-        retailerDemand=row[11]
+        beginningInventoryVolume=row[10]
+        retailerDemand = row[11]
+        supply=row[12]
+
         beginningInventoryWeekNumber = beginningInventoryVolume+supply-retailerDemand
         if beginningInventoryWeekNumber <0:
             beginningInventoryWeekNumber=0
@@ -88,21 +92,21 @@ def thirdModel( weeklyDemandData, masterData, weekNumber, allocationAmount):
     sumOfBeginningInventoryForWeeKNumber = 0
     sumOfAverageDaysOfSupply = 0
     for row in output:
-        sumOfBeginningInventoryForWeeKNumber += row[12]
-        sumOfAverageDaysOfSupply += row[8]
+        sumOfBeginningInventoryForWeeKNumber += row[13]
+        sumOfAverageDaysOfSupply += row[9]### use forecast with variability
     print("BIWK",sumOfBeginningInventoryForWeeKNumber)
     print("ADOS", sumOfAverageDaysOfSupply)
     systemDOS = sumOfBeginningInventoryForWeeKNumber / sumOfAverageDaysOfSupply
     for i in output:
-        fairShare = i[8]*systemDOS
+        fairShare = i[9]*systemDOS
         i.append(fairShare)
     for d in output:
-        underOver= d[13]-d[12]
+        underOver= d[14]-d[13]
         d.append(underOver)
     for row in output:
-        rawAllocation= (row[8]/systemDOS)*allocationAmount
+        rawAllocation= (row[9]/systemDOS)*allocationAmount #sum of average days of supply with forecast variability
         row.append(rawAllocation)
-        netSuppy = rawAllocation + row[14]
+        netSuppy = rawAllocation + row[15]
         if netSuppy < 0:
             netSuppy = 0
         row.append(netSuppy)
