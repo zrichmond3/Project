@@ -1,7 +1,6 @@
-from secondModel.beginningInventoryForWeekNumber import *
-from secondModel.fairShareInventory import *
-
-from secondModel.systemDOS import *
+from beginningInventoryForWeekNumber import *
+from fairShareInventory import *
+from systemDOS import *
 
 
 def averageDaysOfSupply( weeklyDemand, mData, weekNumber,allocationAmount):
