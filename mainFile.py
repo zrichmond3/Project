@@ -172,7 +172,7 @@ class simulation:
             for row in self.output:
                 row[11]=round(row[11])
                 self.totalOrders += row[11]
-            print("I AINT FUCKING INCREMENTING ANYTHING ELSE ", self.totalOrders)
+            print("I AINT FUCKING INCREMENdsfsdTING ANYTHING ELSE ", self.totalOrders)
 
         elif self.totalOrders < allocationAmount:
             print("lesser", self.sDOS)
