@@ -3,10 +3,11 @@ from fairShareInventory import *
 from systemDOS import *
 
 
-def averageDaysOfSupply( weeklyDemand, mData, weekNumber,allocationAmount):
+def averageDaysOfSupply(self, weeklyDemand, mData, weekNumber,allocationAmount, sDOS):
     skuList =[] #Sku List, need it for triple for loop below
     plantList =[] #Plant List, need it for triple for loop below
     averageDOSList = [] #This list will be returned
+    sumOfADS =0
     for row in weeklyDemand: #iteration through the data and to make it usable
         if row[1] not in plantList: #adds all the plants to the Plant List
             plantList.append(row[1])
@@ -27,12 +28,19 @@ def averageDaysOfSupply( weeklyDemand, mData, weekNumber,allocationAmount):
 
     averageDOSList = beginningInventoryForWeekNumber(averageDOSList, mData, weekNumber)
 
-    systemDaysOfSupply, sumOfADS = systemDOS(averageDOSList)
+    if self.sDOS == 0:
+        self.sDOS, sumOfADS = systemDOS(averageDOSList)
+        print(self.sDOS)
+        print("self.sDOS is equal to zero")
+    else:
+        print("else statement hi")
+        for i in averageDOSList:
+            sumOfADS += i[3]
 
 
-    print(systemDaysOfSupply)
+    print(self.sDOS)
     print(sumOfADS)
-    averageDOSList = fairShare(averageDOSList, systemDaysOfSupply)
+    averageDOSList = fairShare(averageDOSList, self.sDOS)
 
     #Place in functionblah
     for d in averageDOSList:

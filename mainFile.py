@@ -38,6 +38,7 @@ class simulation:
         self.kValue = .999
         self.switch = True
         self.iteration = 0
+        self.sDOS = 0
 
 #Load Buttons
         self.loadFirstInputCSVFile = Button(self.left1, width=78, text="Load Weekly Demand", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E+W)
@@ -139,7 +140,71 @@ class simulation:
 
 
         self.dataFirstSet, self.dataSecondSet = stringToNumber(self.dataFirstSet,self.dataSecondSet)
-        self.output = averageDaysOfSupply( self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
+        self.output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount, self.sDOS)
+
+        for row in self.output:
+            self.totalOrders += row[11]
+        if self.totalOrders> allocationAmount:
+            print("greater", self.sDOS)
+            counter =0
+            while self.totalOrders > allocationAmount:
+                self.sDOS -= .1
+                self.output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount, self.sDOS)
+                self.totalOrders = 0
+                counter += 1
+                print("iteration: ", counter)
+                for row in self.output:
+                    self.totalOrders += row[11]
+                print("total MOTHERFUCKING ORDERS: :D ", self.totalOrders)
+            counter = 0
+            while self.totalOrders < allocationAmount:
+                self.sDOS += .01
+                self.output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount, self.sDOS)
+                counter += 1
+                self.totalOrders = 0
+                print("iteration: ", counter)
+                for row in self.output:
+                    self.totalOrders += row[11]
+                print("Huh FUCK WE GOING BACK UP NOW HOMIE ", self.totalOrders)
+            self.sDOS -= .01
+            self.output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount, self.sDOS)
+            self.totalOrders = 0
+            for row in self.output:
+                row[11]=round(row[11])
+                self.totalOrders += row[11]
+            print("I AINT FUCKING INCREMENTING ANYTHING ELSE ", self.totalOrders)
+
+        elif self.totalOrders < allocationAmount:
+            print("lesser", self.sDOS)
+            counter = 0
+            while self.totalOrders < allocationAmount:
+                self.sDOS += .1
+                self.output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber,
+                                                  allocationAmount, self.sDOS)
+                counter += 1
+                self.totalOrders = 0
+                print("iteration: ", counter)
+                for row in self.output:
+                    self.totalOrders += row[11]
+                print(" SHIT GOING TO THE TOP ", self.totalOrders)
+            counter =0
+            while self.totalOrders > allocationAmount:
+                self.sDOS -= .01
+                self.output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount, self.sDOS)
+                self.totalOrders = 0
+                counter += 1
+                print("iteration: ", counter)
+                for row in self.output:
+                    self.totalOrders += row[11]
+                print("DOWN DOWN BABY, UPSTREET - NAME THAT SONG: :D ", self.totalOrders)
+            self.sDOS += .01
+            self.output = averageDaysOfSupply(self, self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount, self.sDOS)
+            self.totalOrders = 0
+            for row in self.output:
+                row[11]=round(row[11])
+                self.totalOrders += row[11]
+            print("WHY ", self.totalOrders)
+
 
 
 
