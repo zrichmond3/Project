@@ -11,20 +11,16 @@ from tkinter import filedialog
 from tkinter import messagebox
 
 from conversions.stringToNumber import *
-from expectedOOS import *
-from firstModel.masterData import *
-from secondModel.averageDaysOfSupply import *
-from secondModel.determineOrderQuantity import *
-from thirdModel import *
-from firstModel.weeklyDemand import *
+from masterData import *
+from determineOrderQuantity import *
+from weeklyDemand import *
 
 #Class created to run GUI
 class simulation:
     def __init__(self,w):
 
 #Create the frames to pack individual frames inside the GUI for better organization
-        self.myTOPFrame = Frame(w)
-        self.myTOPFrame.pack(side=TOP)
+
         self.myLeftFrame = Frame(w)
         self.myLeftFrame.pack(side=LEFT)
 
@@ -38,22 +34,13 @@ class simulation:
         self.left3 = Frame(self.myLeftFrame)
         self.left3.pack()
 
-#Get GT logo, no real value, just thought it looked nice
-        url = "http://w4aql.gtorg.gatech.edu/images/buzzzap.gif"
-        response = urllib.request.urlopen(url)
-        myPicture = response.read()
-        import base64
-        b64_data = base64.encodebytes(myPicture)
-        self.mainImage = PhotoImage(data=b64_data)
+
 #These values can be used throughout the code because they are global
         self.totalOrders = 0
         self.kValue = .999
         self.switch = True
         self.iteration = 0
-#Image
-        self.photoLabel = Label(self.myTOPFrame, image=self.mainImage)
-        self.photoLabel.grid(row=0, column=0)
-#Load Buttons
+
         self.loadFirstInputCSVFile = Button(self.left1, width=78, text="Load Weekly Demand", command=self.loadFirstCSVclicked).grid(row=0, column=0, sticky=E+W)
         self.loadSecondInputCSVFile = Button(self.left1, width=78, text="Load Master Data", command=self.loadSecondCSVclicked).grid(row=1, column=0, sticky=E+W)
 
@@ -82,14 +69,9 @@ class simulation:
         self.outputCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.outputCSVFileEntry.grid(row=5, column=1)
 
-
-        self.outputCSVFile1 = Label(self.left2, text="DOS Model File Path:").grid(row=6, column=0, sticky=E)
-        self.outputCSVFileEntry1 = Entry(self.left2, width=60, state="readonly")
-        self.outputCSVFileEntry1.grid(row=6, column=1)
 #After all the data has been entered, click process button
         self.process_Data = Button(self.left3, text="Process Data", width=78, state="disabled", command=self.processDataButtonClicked)
         self.process_Data.grid(row=0, column=0, sticky=E+W)
-
 
         self.convertData = 0
 
@@ -160,11 +142,8 @@ class simulation:
 
         if self.switch == True:
             self.dataFirstSet, self.dataSecondSet = stringToNumber(self.dataFirstSet,self.dataSecondSet)
-            self.output = averageDaysOfSupply( self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
-            thirdModelOutput = thirdModel(self.dataFirstSet, self.dataSecondSet, weekNumber, allocationAmount)
+
             self.switch = False
-            print("Average Days of Supply: ", self.output[0])
-            print("Third Model Ouput: ", thirdModelOutput[0])
 
         self.totalOrders = 0
 
@@ -182,10 +161,8 @@ class simulation:
             self.kValue = self.kValue - .001
             self.processDataButtonClicked()
 
-        finalData = expectedOOS(self, finalWeeklyOutlook)
+        self.outputToCSV(finalWeeklyOutlook)
 
-        self.outputToCSV(finalData)
-        self.outputToCSV1(self.output)
 
     def checkOrderConstraint(self, finalWeeklyOutlook):
 
@@ -214,30 +191,12 @@ class simulation:
         csvWriter.writerow(
             ["Sku", "Plant", "Average AF Ratio", "Sigma AFRatio", "Forecasted Demand", "Mu Forecast", "Sigma Forecast",
              "Forecast With Variability", "Beginning Inventory Volume", "Retailer Demand", "Supply", "Order Quantity",
-             "OnHand+OnOrder-Demand", "Supply+Inventory","Expected OOS"])
+             "OnHand+OnOrder-Demand", "Supply+Inventory"])
         for row in finalWeeklyOutlook:
             csvWriter.writerow(row)
         file.close()
         return None
-    def outputToCSV1(self, output):
-        # sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand
-        print("K-Value: ", self.kValue)
-        f = filedialog.asksaveasfilename(message="Days of Supply Model")
-        self.outputCSVFileEntry1.config(state=NORMAL)
-        self.outputCSVFileEntry1.delete(0, END)
-        self.outputCSVFileEntry1.insert(0, f)
-        self.outputCSVFileEntry1.config(state="readonly")
 
-        file = open(f, "w", newline="")
-        csvWriter = csv.writer(file)
-        csvWriter.writerow(
-            ["Plant", "WeekNumber", "Sku", "Average Days Of Supply", "Beginning Inventory Volume", "Retailer Demand", "Supply",
-             "Beginning Inventory Week Number", "Fair Share Inventory", "Under Over", "Raw Allocation", "Net Suppy"]
-        )
-        for row in output:
-            csvWriter.writerow(row)
-        file.close()
-        return None
     
 
 
