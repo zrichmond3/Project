@@ -1,11 +1,11 @@
 # This code is broken down into individual files that do a specific task.
 # The code also follows camelCase coding for all naming conventions.
 # SciPy, Statistics, cx_Freeze, and all other packages are imported through PyCharm.
-# If a user clones the this project and runs it individual, all files will need to be in the same folder and all imports will need to be installed relevative to their operating system
 
-#Imports
+
+
 import csv
-import urllib.request
+
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -37,7 +37,8 @@ class simulation:
 
 #These values can be used throughout the code because they are global
         self.totalOrders = 0
-        self.kValue = .999
+        self.kValue = .999999
+        self.minus  = .000001
         self.switch = True
         self.iteration = 0
 
@@ -65,7 +66,7 @@ class simulation:
         self.inputSecondCSVFileEntry.grid(row=3, column=1)
 
 #Output file location, needs to be saved as file.csv
-        self.outputCSVFile = Label(self.left2, text="DV Model File Path:").grid(row=5, column=0, sticky=E)
+        self.outputCSVFile = Label(self.left2, text="Model File Path:").grid(row=5, column=0, sticky=E)
         self.outputCSVFileEntry = Entry(self.left2, width=60, state="readonly")
         self.outputCSVFileEntry.grid(row=5, column=1)
 
@@ -133,7 +134,6 @@ class simulation:
 
 #The beginning of processes the data
 
-#Do cool stuff
     def processDataButtonClicked(self):
 
         allocationAmount = int(self.entryAllocationAmount.get())
@@ -157,8 +157,9 @@ class simulation:
         self.iteration += 1
         print("1st Model Iteration: ", self.iteration)
 
+
         if self.totalOrders > allocationAmount:
-            self.kValue = self.kValue - .001
+            self.kValue = self.kValue - self.minus
             self.processDataButtonClicked()
 
         self.outputToCSV(finalWeeklyOutlook)
@@ -170,6 +171,8 @@ class simulation:
         for row in finalWeeklyOutlook:
             self.totalOrders += row[11]
         self.totalOrders = int(self.totalOrders)
+        print("total order: ", self.totalOrders)
+
 
         #removes afRatio so weeklyDemand can be reused when totalOrders is greater than allocationAmount
         for row in self.dataFirstSet:

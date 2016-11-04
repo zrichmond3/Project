@@ -1,4 +1,3 @@
-
 def convertWeeklyDemand( data):
 
     for row in data: #iteration through the data and to make it usable

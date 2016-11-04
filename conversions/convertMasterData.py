@@ -1,6 +1,5 @@
-
 def convertMasterData( data):
-    #Below makes the data usable
+
     for row in data:
         row[1] = int(row[1]) #changes Week Number from string to int
         row[6] = float(row[6]) #changes Retailer Demand from string to float

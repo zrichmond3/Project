@@ -1,8 +1,6 @@
-#no imports
-
 def determineOrderQuantity(self, data):
 
-    #Data is the weeklyOutlookList that is returned in the masterData function
+    #Data is the outputList that is returned in the masterData function
     orderQuantity = 0
     onHandOnOrderDemand = 0
 
@@ -20,8 +18,8 @@ def determineOrderQuantity(self, data):
         row.append(round(orderQuantity))
         row.append(onHandOnOrderDemand)
         row.append(sum)
-    return data #this is a list in the form of [[weeklyOutlook 1],[weeklyOutlook 2],...,[weeklyOutlook N]]
-#weeklyOutlookList, what each nested list looks like -> (see comment on line #23
+    return data #this is a list in the form of [[outputList 1],[outputList 2],...,[outputList N]]
+#data, what each row list looks like -> (see comment on line #23
 #[sku, plant, avgAFRatio,sigmaAFRatio, forecastedDemand, muForecast, sigmaForecast, forecastVariability, beginningInventoryVolume, retailerDemand, supply, orderQTY, onhand+onOrder-Demand, sum]
 
 

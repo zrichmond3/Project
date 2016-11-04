@@ -1,5 +1,6 @@
 from scipy.stats import norm
 
+#This is a function that determines the expected stockouts
 def expectedOOS(self, data):
     for row in data:
         mu = row[5]
